@@ -12,6 +12,19 @@ namespace upc {
 
     for (unsigned int l = 0; l < r.size(); ++l) {
   		/// \TODO Compute the autocorrelation r[l]
+      /// \DONE Autocorrelación calculada: 
+      /// \f[
+      /// r[l] = \frac{1}{N} \sum_{n=0}^{N} x[n] \cdot x[n+l]
+      /// \f]
+      /// 1. Inicialitzem \f$r[l]\f$ a zero
+      /// 2. Acumulem el producte de \f$x[n]\f$ per \f$x[n+l]\f$ per \f$l\le <= n < N\f$
+      /// 3. Dividim el resultat per \f$N\f$
+      
+      r[l]=0;
+      for (unsigned int n = 0; n < x.size()-l; n++){
+        r[l] += x[n]*x[n+l];
+      }
+      r[l]=r[l]/x.size();
     }
 
     if (r[0] == 0.0F) //to avoid log() and divide zero 
@@ -76,6 +89,9 @@ namespace upc {
     ///	   .
 	/// In either case, the lag should not exceed that of the minimum value of the pitch.
 
+
+    iRmax = r.begin() + npitch_min;
+    
     unsigned int lag = iRMax - r.begin();
 
     float pot = 10 * log10(r[0]);
