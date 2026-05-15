@@ -29,9 +29,9 @@ namespace upc {
     unsigned int frameLen, ///< length of frame (in samples). Has to be set in the constructor call
       samplingFreq, ///< sampling rate (in samples per second). Has to be set in the constructor call
       npitch_min, ///< minimum value of pitch period, in samples
-      npitch_max; ///< maximum value of pitch period, in samples
-      llindar_pot; ///< threshold for the normalized autocorrelation of the maximum peak (lag > 0)
-      llindar_r1norm; ///< threshold for the normalized autocorrelation of the first peak (lag = 1)
+      npitch_max, ///< maximum value of pitch period, in samples
+      llindar_pot, ///< threshold for the normalized autocorrelation of the maximum peak (lag > 0)
+      llindar_r1norm, ///< threshold for the normalized autocorrelation of the first peak (lag = 1)
       llindar_rmaxnorm; ///< threshold for the normalized autocorrelation of the maximum peak (lag > 0)
  
 	///

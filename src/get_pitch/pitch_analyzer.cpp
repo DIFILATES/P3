@@ -63,10 +63,13 @@ namespace upc {
     /// \TODO Implement a rule to decide whether the sound is voiced or not.
     /// * You can use the standard features (pot, r1norm, rmaxnorm),
     ///   or compute and use other ones.
-    if (r1norm > 0.5F || rmaxnorm > 0.5F)
-      return false;
-    }
+  if (pot < llindar_pot) {
     return true;
+  }
+  if (r1norm < llindar_r1norm && rmaxnorm < llindar_rmaxnorm) {
+    return true;
+  }
+    return false;
   }
 
   float PitchAnalyzer::compute_pitch(vector<float> & x) const {
@@ -106,7 +109,7 @@ namespace upc {
     //You can print these (and other) features, look at them using wavesurfer
     //Based on that, implement a rule for unvoiced
     //change to #if 1 and compile
-#if 0
+#if 1
     if (r[0] > 0.0F)
       cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
 #endif

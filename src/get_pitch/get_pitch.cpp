@@ -25,11 +25,11 @@ Usage:
     get_pitch --version
 
 Options:
-    -p, --potencia Llindar de decisió per a la potència (en dB). [Default: 0]
-    -1, --r1norm Llindar de correlació de 1 per la decisió sonor/sord. [Default: 0.6]
-    -M, --rmaxnorm Llindar de correlació al max secundari per la decisió. [Default: 0.6]
-    -h, --help  Show this screen
-    --version   Show the version of the project
+    -p, --potencia=<val>    Llindar de decisió per a la potència (en dB). [default: 0]
+    -1, --r1norm=<val>      Llindar de correlació de 1 per la decisió sonor/sord. [default: 0.6]
+    -M, --rmaxnorm=<val>    Llindar de correlació al max secundari per la decisió. [default: 0.6]
+    -h, --help              Show this screen
+    --version               Show the version of the project
 
 
 Arguments:
@@ -43,6 +43,7 @@ int main(int argc, const char *argv[]) {
 	/// \TODO 
 	///  Modify the program syntax and the call to **docopt()** in order to
 	///  add options and arguments to the program.
+  /// \FET
     std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
         {argv + 1, argv + argc},	// array of arguments, without the program name
         true,    // show help if requested
@@ -50,9 +51,9 @@ int main(int argc, const char *argv[]) {
 
 	std::string input_wav = args["<input-wav>"].asString();
 	std::string output_txt = args["<output-txt>"].asString();
-  float llindar_pot = stof args["--potencia"].asString();
-  float llindar_r1norm = stof args["--r1norm"].asString();
-  float llindar_rmaxnorm = stof args["--rmaxnorm"].asString();
+  float llindar_pot = std::stof(args["--potencia"].asString());
+  float llindar_r1norm = std::stof(args["--r1norm"].asString());
+  float llindar_rmaxnorm = std::stof(args["--rmaxnorm"].asString());
 
   // Read input sound file
   unsigned int rate;
