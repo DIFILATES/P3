@@ -14,7 +14,14 @@ Ejercicios básicos
   `get_pitch`.
 
    * Complete el cálculo de la autocorrelación e inserte a continuación el código correspondiente.
-     	![Codi autocorrel](./img/autocor_codi.png)
+    
+    ```cpp
+    r[l] = 0;
+    for (unsigned int n = 0; n < x.size() - l; n++){
+      r[l] += x[n] * x[n + l];
+    }
+    r[l] /= x.size();
+    ```
 
    * Inserte una gŕafica donde, en un *subplot*, se vea con claridad la señal temporal de un segmento de
      unos 30 ms de un fonema sonoro y su periodo de pitch; y, en otro *subplot*, se vea con claridad la
@@ -28,7 +35,28 @@ Ejercicios básicos
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
      autocorrelación. Inserte a continuación el código correspondiente.
 
+    ```cpp
+    iRMax = r.begin() + npitch_min;
+    for(iR= iRMax; iR < r.begin() + npitch_max; ++iR){
+      if(*iR > *iRMax){
+        iRMax =iR;
+      }
+    }
+
+    unsigned int lag = iRMax - r.begin();
+    ```
+
    * Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
+    ```cpp
+    if (pot < llindar_pot) {
+      return true;
+    }
+    if (r1norm < llindar_r1norm && rmaxnorm < llindar_rmaxnorm) {
+      return true;
+    }
+    return false;
+    ```
+
 
    * Puede serle útil seguir las instrucciones contenidas en el documento adjunto `código.pdf`.
 

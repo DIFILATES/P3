@@ -24,7 +24,7 @@ namespace upc {
       for (unsigned int n = 0; n < x.size()-l; n++){
         r[l] += x[n]*x[n+l];
       }
-      r[l]=r[l]/x.size();
+      r[l] /= x.size();
     }
 
     if (r[0] == 0.0F) //to avoid log() and divide zero 
@@ -40,6 +40,9 @@ namespace upc {
     switch (win_type) {
     case HAMMING:
       /// \TODO Implement the Hamming window
+      for (unsigned int i = 0; i < frameLen; i++){
+          window[i] = 0.54F - 0.46F * cos(2.0F * M_PI * i / (frameLen - 1));
+      }
       break;
     case RECT:
     default:
@@ -49,32 +52,33 @@ namespace upc {
 
   void PitchAnalyzer::set_f0_range(float min_F0, float max_F0) {
     npitch_min = (unsigned int) samplingFreq/max_F0;
-    if (npitch_min < 2)
-      npitch_min = 2;  // samplingFreq/2
+    if (npitch_min < 2) npitch_min = 2;  // samplingFreq/2
 
     npitch_max = 1 + (unsigned int) samplingFreq/min_F0;
 
     //frameLen should include at least 2*T0
-    if (npitch_max > frameLen/2)
-      npitch_max = frameLen/2;
+    if (npitch_max > frameLen/2) npitch_max = frameLen/2;
   }
 
   bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
     /// \TODO Implement a rule to decide whether the sound is voiced or not.
     /// * You can use the standard features (pot, r1norm, rmaxnorm),
     ///   or compute and use other ones.
-  if (pot < llindar_pot) {
-    return true;
-  }
-  if (r1norm < llindar_r1norm && rmaxnorm < llindar_rmaxnorm) {
-    return true;
-  }
+    const float llindar_pot     = -10.0F;  
+    const float llindar_r1norm  =  0.95F;
+    const float llindar_rmaxnorm = 0.6F;
+  
+    if (pot < llindar_pot) {
+      return true;
+    }
+    if (r1norm < llindar_r1norm && rmaxnorm < llindar_rmaxnorm) {
+      return true;
+    }
     return false;
   }
 
   float PitchAnalyzer::compute_pitch(vector<float> & x) const {
-    if (x.size() != frameLen)
-      return -1.0F;
+    if (x.size() != frameLen) return -1.0F;
 
     //Window input frame
     for (unsigned int i=0; i<x.size(); ++i)
@@ -94,14 +98,13 @@ namespace upc {
 	///    - The lag corresponding to the maximum value of the pitch.
     ///	   .
 	/// In either case, the lag should not exceed that of the minimum value of the pitch.
-
-    for(iR= iRMax; iR < r.begin() + npitch_min; ++iR){
+    iRMax = r.begin() + npitch_min;
+    for(iR= iRMax; iR < r.begin() + npitch_max; ++iR){
       if(*iR > *iRMax){
         iRMax =iR;
       }
     }
-    iRMax = r.begin() + npitch_min;
-    
+
     unsigned int lag = iRMax - r.begin();
 
     float pot = 10 * log10(r[0]);
