@@ -33,7 +33,9 @@ namespace upc {
     float llindar_pot, ///< threshold for the normalized autocorrelation of the maximum peak (lag > 0)
       llindar_r1norm, ///< threshold for the normalized autocorrelation of the first peak (lag = 1)
       llindar_rmaxnorm, ///< threshold for the normalized autocorrelation of the maximum peak (lag > 0)
-      llindar_zcr; ///< threshold for the zero crossing rate
+      llindar_zcr;///< threshold for the zero crossing rate
+    int method; ///< method to compute pitch: 0=autocorrelation, 1=amdf, 2=cepstrum, 3=combinat
+
 	///
 	/// Computes correlation from lag=0 to r.size()
 	///
@@ -53,6 +55,9 @@ namespace upc {
 	///
     bool unvoiced(float pot, float r1norm, float rmaxnorm, float zcr) const;
 
+    void amdf(const std::vector<float> &x, std::vector<float> &d) const;
+
+    float compute_cepstrum_pitch(const std::vector<float> &x) const;
 
   public:
     PitchAnalyzer(	unsigned int fLen,			///< Frame length in samples
@@ -63,7 +68,9 @@ namespace upc {
 					float llindar_pot = 0.0F,		///< Threshold for the normalized autocorrelation of the maximum peak (lag > 0)
 					float llindar_r1norm = 0.0F,	///< Threshold for the normalized autocorrelation of the first peak (lag = 1)
 					float llindar_rmaxnorm = 0.0F,	///< Threshold for the normalized autocorrelation of the maximum peak (lag > 0)
-				  float llindar_zcr = 0.0F 
+				  float llindar_zcr = 0.0F,       ///< Threshold for the zero crossing rate
+                  int method = 0      ///< Method to compute pitch: 0=autocorrelation, 1=amdf, 2=cepstrum, 3=combinat
+          
         )
 	{
       frameLen = fLen;
@@ -74,7 +81,8 @@ namespace upc {
       this->llindar_r1norm = llindar_r1norm;
       this->llindar_rmaxnorm = llindar_rmaxnorm;
       this->llindar_zcr = llindar_zcr;
-    }
+      this->method = method;
+  }
 
 	///
     /// Operator (): computes the pitch for the given vector x
