@@ -34,7 +34,7 @@ Ejercicios básicos
 
 	***La gràfica s'ha generat amb Python utilitzant la biblioteca `matplotlib`. El segment de 30 ms correspon a un fonema sonor del fitxer `pav_2042.wav` amb una freqüència fonamental estimada de ~126 Hz (T₀ ≈ 7.94 ms). A la gràfica superior es pot observar la periodicitat de la senyal amb les marques del període de pitch. A la gràfica inferior es mostra l'autocorrelació normalitzada amb el primer màxim secundari clarament identificat a lag = 127 mostres.***
 
-  		![Pitch subplots](./img/pitch_plot.png)
+  ![Pitch subplots](./img/pitch_plot.png)
 
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
      autocorrelación. Inserte a continuación el código correspondiente.
