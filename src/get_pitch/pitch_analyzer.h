@@ -29,16 +29,20 @@ namespace upc {
     unsigned int frameLen, ///< length of frame (in samples). Has to be set in the constructor call
       samplingFreq, ///< sampling rate (in samples per second). Has to be set in the constructor call
       npitch_min, ///< minimum value of pitch period, in samples
-      npitch_max, ///< maximum value of pitch period, in samples
-      llindar_pot, ///< threshold for the normalized autocorrelation of the maximum peak (lag > 0)
+      npitch_max; ///< maximum value of pitch period, in samples
+    float llindar_pot, ///< threshold for the normalized autocorrelation of the maximum peak (lag > 0)
       llindar_r1norm, ///< threshold for the normalized autocorrelation of the first peak (lag = 1)
-      llindar_rmaxnorm; ///< threshold for the normalized autocorrelation of the maximum peak (lag > 0)
- 
+      llindar_rmaxnorm, ///< threshold for the normalized autocorrelation of the maximum peak (lag > 0)
+      llindar_zcr; ///< threshold for the zero crossing rate
 	///
 	/// Computes correlation from lag=0 to r.size()
 	///
     void autocorrelation(const std::vector<float> &x, std::vector<float> &r) const;
 
+  ///
+  /// ZCR
+  ///
+    float zcr(const std::vector<float> &x) const;
 	///
 	/// Returns the pitch (in Hz) of input frame x
 	///
@@ -47,7 +51,7 @@ namespace upc {
 	///
 	/// Returns true is the frame is unvoiced
 	///
-    bool unvoiced(float pot, float r1norm, float rmaxnorm) const;
+    bool unvoiced(float pot, float r1norm, float rmaxnorm, float zcr) const;
 
 
   public:
@@ -58,8 +62,9 @@ namespace upc {
 					float max_F0 = MAX_F0,		///< Pitch range should be restricted to be below this value
 					float llindar_pot = 0.0F,		///< Threshold for the normalized autocorrelation of the maximum peak (lag > 0)
 					float llindar_r1norm = 0.0F,	///< Threshold for the normalized autocorrelation of the first peak (lag = 1)
-					float llindar_rmaxnorm = 0.0F	///< Threshold for the normalized autocorrelation of the maximum peak (lag > 0)
-				 )
+					float llindar_rmaxnorm = 0.0F,	///< Threshold for the normalized autocorrelation of the maximum peak (lag > 0)
+				  float llindar_zcr = 0.0F 
+        )
 	{
       frameLen = fLen;
       samplingFreq = sFreq;
@@ -68,6 +73,7 @@ namespace upc {
       this->llindar_pot = llindar_pot;
       this->llindar_r1norm = llindar_r1norm;
       this->llindar_rmaxnorm = llindar_rmaxnorm;
+      this->llindar_zcr = llindar_zcr;
     }
 
 	///

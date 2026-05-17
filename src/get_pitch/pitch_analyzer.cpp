@@ -12,7 +12,7 @@ namespace upc {
 
     for (unsigned int l = 0; l < r.size(); ++l) {
   		/// \TODO Compute the autocorrelation r[l]
-      /// \DONE Autocorrelación calculada: 
+      /// \DONE Autocorrelació calculada: 
       /// \f[
       /// r[l] = \frac{1}{N} \sum_{n=0}^{N} x[n] \cdot x[n+l]
       /// \f]
@@ -31,6 +31,15 @@ namespace upc {
       r[0] = 1e-10; 
   }
 
+  float PitchAnalyzer::zcr(const std::vector<float> &x) const {
+    float zcr = 0.0F;
+    for (unsigned int i = 1; i < x.size(); i++) {
+        if ((x[i] >= 0) != (x[i-1] >= 0))
+            zcr++;
+    }
+    return zcr / x.size();
+  }
+
   void PitchAnalyzer::set_window(Window win_type) {
     if (frameLen == 0)
       return;
@@ -40,6 +49,7 @@ namespace upc {
     switch (win_type) {
     case HAMMING:
       /// \TODO Implement the Hamming window
+      /// \DONE Finestra Hamming calculada:
       for (unsigned int i = 0; i < frameLen; i++){
           window[i] = 0.54F - 0.46F * cos(2.0F * M_PI * i / (frameLen - 1));
       }
@@ -60,20 +70,18 @@ namespace upc {
     if (npitch_max > frameLen/2) npitch_max = frameLen/2;
   }
 
-  bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
+  bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm, float zcr) const {
     /// \TODO Implement a rule to decide whether the sound is voiced or not.
     /// * You can use the standard features (pot, r1norm, rmaxnorm),
     ///   or compute and use other ones.
-    const float llindar_pot     = -10.0F;  
-    const float llindar_r1norm  =  0.95F;
-    const float llindar_rmaxnorm = 0.6F;
-  
     if (pot < llindar_pot) {
       return true;
     }
     if (r1norm < llindar_r1norm && rmaxnorm < llindar_rmaxnorm) {
       return true;
     }
+    if (zcr > llindar_zcr)
+      return true;
     return false;
   }
 
@@ -108,6 +116,7 @@ namespace upc {
     unsigned int lag = iRMax - r.begin();
 
     float pot = 10 * log10(r[0]);
+    float z = zcr(x);
 
     //You can print these (and other) features, look at them using wavesurfer
     //Based on that, implement a rule for unvoiced
@@ -117,7 +126,7 @@ namespace upc {
       cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
 #endif
     
-    if (unvoiced(pot, r[1]/r[0], r[lag]/r[0]))
+    if (unvoiced(pot, r[1]/r[0], r[lag]/r[0], z))
       return 0;
     else
       return (float) samplingFreq/(float) lag;

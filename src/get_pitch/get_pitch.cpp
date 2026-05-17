@@ -28,6 +28,7 @@ Options:
     -p, --potencia=<val>    Llindar de decisió per a la potència (en dB). [default: 0]
     -1, --r1norm=<val>      Llindar de correlació de 1 per la decisió sonor/sord. [default: 0.6]
     -M, --rmaxnorm=<val>    Llindar de correlació al max secundari per la decisió. [default: 0.6]
+    -z, --zcr=<val>         Llindar de ZCR per la decisió sonor/sord. [default: 1.0]
     -h, --help              Show this screen
     --version               Show the version of the project
 
@@ -43,7 +44,6 @@ int main(int argc, const char *argv[]) {
 	/// \TODO 
 	///  Modify the program syntax and the call to **docopt()** in order to
 	///  add options and arguments to the program.
-  /// \FET
     std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
         {argv + 1, argv + argc},	// array of arguments, without the program name
         true,    // show help if requested
@@ -54,6 +54,7 @@ int main(int argc, const char *argv[]) {
   float llindar_pot = std::stof(args["--potencia"].asString());
   float llindar_r1norm = std::stof(args["--r1norm"].asString());
   float llindar_rmaxnorm = std::stof(args["--rmaxnorm"].asString());
+  float llindar_zcr = std::stof(args["--zcr"].asString());
 
   // Read input sound file
   unsigned int rate;
@@ -67,7 +68,7 @@ int main(int argc, const char *argv[]) {
   int n_shift = rate * FRAME_SHIFT;
 
   // Define analyzer
-  PitchAnalyzer analyzer(n_len, rate, PitchAnalyzer::RECT, 50, 500, llindar_pot,llindar_r1norm,llindar_rmaxnorm);
+  PitchAnalyzer analyzer(n_len, rate, PitchAnalyzer::HAMMING, 50, 500, llindar_pot,llindar_r1norm,llindar_rmaxnorm, llindar_zcr);
 
   /// \TODO
   /// Preprocess the input signal in order to ease pitch estimation. For instance,
